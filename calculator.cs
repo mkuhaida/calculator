@@ -73,14 +73,19 @@ namespace Calculator
         }
 
         private bool IsKeyCharValid(char c, string text) =>
-            char.IsDigit(c) || c == '.' || c == ',' || (c == '-' && string.IsNullOrEmpty(text)) || char.IsControl(c);
+            char.IsDigit(c)
+            || c == '.' || c == ','
+            || (c == '-' && string.IsNullOrEmpty(text))
+            || char.IsControl(c);
 
         private bool DelimiterAlreadyExists(char c, string text) =>
             (c == '.' || c == ',') && text.Contains(currentDelimiter);
 
-        private bool IsInputNumberValid(char c, string text)
-        {
-            return !char.IsDigit(c) || decimal.TryParse(text + c, out var number) && number <= 1000000000000 && number >= -1000000000000;
-        }
+        private bool IsInputNumberValid(char c, string text) =>
+            !char.IsDigit(c)
+                || decimal.TryParse(text + c, out var number)
+                    && Math.Round(number, 6) == number
+                    && number <= 1000000000000.000000m
+                    && number >= -1000000000000.000000m;
     }
 }

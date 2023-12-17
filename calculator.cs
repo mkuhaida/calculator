@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Calculator
 {
@@ -40,21 +42,51 @@ namespace Calculator
 
         private void UpdateTextBox3Value()
         {
-            decimal.TryParse(textBox1.Text, out var number1);
-            decimal.TryParse(textBox2.Text, out var number2);
+            if (!Regex.IsMatch(textBox1.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$")
+                || !Regex.IsMatch(textBox2.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$"))
+            {
+                label3.Text = "Incorrect input data.";
+                return;
+            }
 
+            var parse1 = decimal.TryParse(Regex.Replace(textBox1.Text, @"\s+", ""), out var number1);
+            var parse2 = decimal.TryParse(Regex.Replace(textBox2.Text, @"\s+", ""), out var number2);
+
+            if(!parse1 || !parse2)
+            {
+                label3.Text = "Incorrect input data.";
+                return;
+            }
+
+            decimal result;
             switch (comboBox1.SelectedIndex)
             {
                 case 0:
-                    textBox3.Text = (number1 + number2).ToString();
+                    result = number1 + number2;
                     break;
                 case 1:
-                    textBox3.Text = (number1 - number2).ToString();
+                    result = number1 - number2;
+                    break;
+                case 2:
+                    result = number1 * number2;
+                    break;
+                case 3:
+                    if (number2 == 0)
+                    {
+                        label3.Text = "Can't divide by zero.";
+                        return;
+                    }
+                    else
+                    {
+                        result = number1 / number2;
+                    }
                     break;
                 default:
-                    textBox3.Text = string.Empty;
+                    result = 0;
                     break;
             }
+            textBox3.Text = result.ToString("#,0.######").Replace(',', ' ');
+            label3.Text = string.Empty;
         }
 
         private void CorrectInputSymbol(KeyPressEventArgs e, string text)
@@ -64,28 +96,18 @@ namespace Calculator
                 e.KeyChar = currentDelimiter;
             }
 
-            if (!IsKeyCharValid(e.KeyChar, text)
-                || DelimiterAlreadyExists(e.KeyChar, text)
-                || !IsInputNumberValid(e.KeyChar, text))
+            if (!IsKeyCharValid(e.KeyChar) || DelimiterAlreadyExists(e.KeyChar, text))
             {
                 e.Handled = true;
             }
         }
 
-        private bool IsKeyCharValid(char c, string text) =>
+        private bool IsKeyCharValid(char c) =>
             char.IsDigit(c)
-            || c == '.' || c == ','
-            || (c == '-' && string.IsNullOrEmpty(text))
+            || c == '.' || c == ',' || c == ' ' || c == '-'
             || char.IsControl(c);
 
         private bool DelimiterAlreadyExists(char c, string text) =>
             (c == '.' || c == ',') && text.Contains(currentDelimiter);
-
-        private bool IsInputNumberValid(char c, string text) =>
-            !char.IsDigit(c)
-                || decimal.TryParse(text + c, out var number)
-                    && Math.Round(number, 6) == number
-                    && number <= 1000000000000.000000m
-                    && number >= -1000000000000.000000m;
     }
 }

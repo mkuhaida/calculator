@@ -5,11 +5,8 @@ namespace Calculator
 {
     public partial class Calculator : Form
     {
-        private readonly char currentDelimiter;
-
         public Calculator()
         {
-            currentDelimiter = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
             InitializeComponent();
         }
 
@@ -125,7 +122,7 @@ namespace Calculator
         {
             if (e.KeyChar == '.' || e.KeyChar == ',')
             {
-                e.KeyChar = currentDelimiter;
+                e.KeyChar = '.';
             }
 
             if (!IsKeyCharValid(e.KeyChar) || DelimiterAlreadyExists(e.KeyChar, text))
@@ -140,6 +137,6 @@ namespace Calculator
             || char.IsControl(c);
 
         private bool DelimiterAlreadyExists(char c, string text) =>
-            (c == '.' || c == ',') && text.Contains(currentDelimiter);
+            (c == '.' || c == ',') && (text.Contains('.') || text.Contains('.'));
     }
 }

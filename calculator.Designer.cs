@@ -144,6 +144,7 @@
             textBox4.Size = new Size(151, 27);
             textBox4.TabIndex = 9;
             textBox4.Text = "0";
+            textBox4.KeyPress += textBox4_KeyPress;
             // 
             // textBox5
             // 
@@ -152,6 +153,7 @@
             textBox5.Size = new Size(148, 27);
             textBox5.TabIndex = 8;
             textBox5.Text = "0";
+            textBox5.KeyPress += textBox5_KeyPress_1;
             // 
             // comboBox3
             // 

@@ -25,38 +25,55 @@ namespace Calculator
             CorrectInputSymbol(e, textBox2.Text);
         }
 
-
         private void UpdateTextBox3Value()
         {
-            if (!Regex.IsMatch(textBox1.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$")
-                || !Regex.IsMatch(textBox2.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$")
-                || !Regex.IsMatch(textBox5.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$")
-                || !Regex.IsMatch(textBox4.Text, @"^(-)?(\d+|(\d+(\s\d{3}))*)(\.\d+)?$"))
+            if (!IsInputNumberInValidFormat(textBox1.Text)
+                || !IsInputNumberInValidFormat(textBox2.Text)
+                || !IsInputNumberInValidFormat(textBox3.Text)
+                || !IsInputNumberInValidFormat(textBox4.Text))
             {
-                label3.Text = "Incorrect input data.";
+                label3.Text = "Incorrect format of input data.";
+                textBox3.Text = "";
+                textBox6.Text = "";
                 return;
             }
 
-            var parse1 = decimal.TryParse(Regex.Replace(textBox1.Text, @"\s+", ""), out var number1);
-            var parse2 = decimal.TryParse(Regex.Replace(textBox2.Text, @"\s+", ""), out var number2);
-            var parse3 = decimal.TryParse(Regex.Replace(textBox5.Text, @"\s+", ""), out var number3);
-            var parse4 = decimal.TryParse(Regex.Replace(textBox4.Text, @"\s+", ""), out var number4);
+            var parse1 = decimal.TryParse(Regex.Replace(textBox1.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number1);
+            var parse2 = decimal.TryParse(Regex.Replace(textBox2.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number2);
+            var parse3 = decimal.TryParse(Regex.Replace(textBox5.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number3);
+            var parse4 = decimal.TryParse(Regex.Replace(textBox4.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number4);
 
             if (!parse1 || !parse2 || !parse3 || !parse4)
             {
                 label3.Text = "Incorrect input data.";
+                textBox3.Text = "";
+                textBox6.Text = "";
                 return;
             }
 
             (bool, decimal) result1, result2 = (false, 0), result3 = (false, 0);
 
             result1 = ApplyOperation(comboBox3.SelectedIndex, number2, number3);
-            if (result1.Item1) result2 = ApplyOperation(comboBox1.SelectedIndex, number1, result1.Item2);
-            if (result2.Item1) result3 = ApplyOperation(comboBox2.SelectedIndex, result2.Item2, number4);
+            if ((comboBox1.SelectedIndex == 0 || comboBox1.SelectedIndex == 1) && (comboBox2.SelectedIndex == 2 || comboBox2.SelectedIndex == 3))
+            {
+                if (result1.Item1) result2 = ApplyOperation(comboBox2.SelectedIndex, result1.Item2, number4);
+                if (result2.Item1) result3 = ApplyOperation(comboBox1.SelectedIndex, number1, result2.Item2);
+            }
+            else
+            {
+                if (result1.Item1) result2 = ApplyOperation(comboBox1.SelectedIndex, number1, result1.Item2);
+                if (result2.Item1) result3 = ApplyOperation(comboBox2.SelectedIndex, result2.Item2, number4);
+            }
 
-            DisplayRoundResult(comboBox4.SelectedIndex, result3.Item2);
-            label3.Text = string.Empty;
+            if (result1.Item1 && result2.Item1 && result3.Item1)
+            {
+                DisplayRoundResult(comboBox4.SelectedIndex, result3.Item2);
+                label3.Text = "";
+            }
         }
+
+        private bool IsInputNumberInValidFormat(string text) =>
+            Regex.IsMatch(text, @"^\s*-?(\d{1,3}(\s\d{3})*(\.\d+)?)?\s*$") || Regex.IsMatch(text, @"^\s*(-)?(\d+)(\.\d+)?\s*$");
 
         private void DisplayRoundResult(int roundingType, decimal result)
         {
@@ -120,12 +137,12 @@ namespace Calculator
 
         private void CorrectInputSymbol(KeyPressEventArgs e, string text)
         {
-            if (e.KeyChar == '.' || e.KeyChar == ',')
+            if (e.KeyChar == ',')
             {
                 e.KeyChar = '.';
             }
 
-            if (!IsKeyCharValid(e.KeyChar) || DelimiterAlreadyExists(e.KeyChar, text))
+            if (!IsKeyCharValid(e.KeyChar))
             {
                 e.Handled = true;
             }
@@ -136,7 +153,14 @@ namespace Calculator
             || c == '.' || c == ',' || c == ' ' || c == '-'
             || char.IsControl(c);
 
-        private bool DelimiterAlreadyExists(char c, string text) =>
-            (c == '.' || c == ',') && (text.Contains('.') || text.Contains('.'));
+        private void textBox5_KeyPress_1(object sender, KeyPressEventArgs e)
+        {
+            CorrectInputSymbol(e, textBox5.Text);
+        }
+
+        private void textBox4_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            CorrectInputSymbol(e, textBox4.Text);
+        }
     }
 }

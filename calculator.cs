@@ -29,7 +29,7 @@ namespace Calculator
         {
             if (!IsInputNumberInValidFormat(textBox1.Text)
                 || !IsInputNumberInValidFormat(textBox2.Text)
-                || !IsInputNumberInValidFormat(textBox3.Text)
+                || !IsInputNumberInValidFormat(textBox5.Text)
                 || !IsInputNumberInValidFormat(textBox4.Text))
             {
                 label3.Text = "Incorrect format of input data.";
@@ -80,16 +80,16 @@ namespace Calculator
             switch (roundingType)
             {
                 case 0:
-                    textBox3.Text = Math.Round(result, 6, MidpointRounding.AwayFromZero).ToString("#,0.######").Replace(',', ' ');
-                    textBox6.Text = Math.Round(result, MidpointRounding.AwayFromZero).ToString("#,0.######").Replace(',', ' ');
+                    textBox3.Text = Math.Round(result, 6, MidpointRounding.AwayFromZero).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
+                    textBox6.Text = Math.Round(result, MidpointRounding.AwayFromZero).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
                     break;
                 case 1:
-                    textBox3.Text = Math.Round(result, 6, MidpointRounding.ToEven).ToString("#,0.######").Replace(',', ' ');
-                    textBox6.Text = Math.Round(result, MidpointRounding.ToEven).ToString("#,0.######").Replace(',', ' ');
+                    textBox3.Text = Math.Round(result, 6, MidpointRounding.ToEven).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
+                    textBox6.Text = Math.Round(result, MidpointRounding.ToEven).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
                     break;
                 case 2:
-                    textBox3.Text = Truncate6Nums(result).ToString("#,0.######").Replace(',', ' ');
-                    textBox6.Text = decimal.Truncate(result).ToString("#,0.######").Replace(',', ' ');
+                    textBox3.Text = Truncate6Nums(result).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
+                    textBox6.Text = decimal.Truncate(result).ToString("#,0.######", NumberFormatInfo.InvariantInfo).Replace(',', ' ');
                     break;
                 default:
                     result = 0;

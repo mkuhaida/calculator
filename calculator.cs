@@ -38,10 +38,10 @@ namespace Calculator
                 return;
             }
 
-            var parse1 = decimal.TryParse(Regex.Replace(textBox1.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number1);
-            var parse2 = decimal.TryParse(Regex.Replace(textBox2.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number2);
-            var parse3 = decimal.TryParse(Regex.Replace(textBox5.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number3);
-            var parse4 = decimal.TryParse(Regex.Replace(textBox4.Text, @"\s+", ""), CultureInfo.CreateSpecificCulture("en-GB"), out var number4);
+            var parse1 = decimal.TryParse(Regex.Replace(textBox1.Text, @"\s+", ""), CultureInfo.InvariantCulture, out var number1);
+            var parse2 = decimal.TryParse(Regex.Replace(textBox2.Text, @"\s+", ""), CultureInfo.InvariantCulture, out var number2);
+            var parse3 = decimal.TryParse(Regex.Replace(textBox5.Text, @"\s+", ""), CultureInfo.InvariantCulture, out var number3);
+            var parse4 = decimal.TryParse(Regex.Replace(textBox4.Text, @"\s+", ""), CultureInfo.InvariantCulture, out var number4);
 
             if (!parse1 || !parse2 || !parse3 || !parse4)
             {
